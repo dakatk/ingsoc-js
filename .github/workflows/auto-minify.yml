@@ -1,0 +1,30 @@
+# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
+
+name: Auto Minify
+
+on:
+  push:
+    branches:
+    - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    # Checks-out your repository under $GITHUB_WORKSPACE, so auto-minify job can access it
+    - uses: actions/checkout@v2
+
+    - name: Auto Minify
+      uses: nizarmah/auto-minify@v2.1
+      with:
+        overwrite: true
+        directory: 'lib'
+
+    # Auto commits minified content to the existing files
+    # Ignore it if you don't want to commit the files to the repository 
+    - name: Auto committing minified files
+      uses: stefanzweifel/git-auto-commit-action@v4
+      with:
+        commit_message: "Github Action: Auto Minified JS files"
+        branch: ${{ github.ref }}
