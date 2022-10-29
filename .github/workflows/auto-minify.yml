@@ -18,7 +18,7 @@ jobs:
     - name: Auto Minify
       uses: nizarmah/auto-minify@v2.1
       with:
-        overwrite: true
+        overwrite: false
         directory: 'lib'
 
     # Auto commits minified content to the existing files
