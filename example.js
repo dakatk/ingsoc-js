@@ -1,62 +1,48 @@
-BigBrother.registerPartyMember({
-    id: 'app-component', 
-    watchers: { message: 'Hello, World!' }
+BigBrother.registerPartyMember('app-component', {
+    message: 'Hello, World!'
 });
 
-BigBrother.registerPartyMember({
-    id: 'main-component',
-    watchers: {
-        title: 'Title',
-        titleClass: 'red',
-        titleId: 'bg-yellow',
-        showTitle: true,
+BigBrother.registerPartyMember('main-component', {
+    title: 'Title',
+    titleClass: 'red',
+    titleId: 'bg-yellow',
+    showTitle: true,
+    
+    switchClass() {
+        this.titleClass = (this.titleClass === 'red' ? 'blue' : 'red');
     },
-    listeners: {
-        switchClass() {
-            console.log(this);
-            const titleClass = this.watchers.titleClass;
-            this.watchers.titleClass = (titleClass === 'red' ? 'blue' : 'red');
-        },
-        switchId() {
-            const titleId = this.watchers.titleId;
-            this.watchers.titleId = (titleId === 'bg-cyan' ? 'bg-yellow' : 'bg-cyan');
-        },
-        toggleTitle(event) {
-            const showTitle = event.target.checked;
-            this.watchers.showTitle = showTitle;
-        }
-    }
-});
-
-BigBrother.registerPartyMember({
-    id: 'date-component',
-    watchers: { date: '2021-02-01' },
-    listeners: {
-        fromDateObject(date) {
-            const day = (`0${date.getDate()}`).slice(-2);
-            const month = (`0${date.getMonth() + 1}`).slice(-2);
-            this.watchers.date = `${date.getFullYear()}-${month}-${day}`;
-        }
-    }
-});
-
-BigBrother.registerPartyMember({
-    id: 'select-component',
-    watchers: {
-        text: ['Zero', 'One', 'Two']
+    switchId() {
+        this.titleId = (this.titleId === 'bg-cyan' ? 'bg-yellow' : 'bg-cyan');
     },
-    listeners: {
-        updateText(event) {
-            this.watchers.text[0] = event.target.value;
-            this.watchers.text[2] = this.parent.watchers.message;
-
-            const example = this.children.example;
-            const date = new Date(`${example.watchers.date}T00:00`);
-
-            date.setDate(date.getDate() + 1);
-            example.listeners.fromDateObject(date);
-        }
+    toggleTitle(event) {
+        this.showTitle = event.target.checked;
     }
 });
 
-window.onload = () => BigBrother.beginWatching();
+BigBrother.registerPartyMember('date-component', {
+    date: '2021-02-01',
+    fromDateObject(date) {
+        const day = (`0${date.getDate()}`).slice(-2);
+        const month = (`0${date.getMonth() + 1}`).slice(-2);
+        this.date = `${date.getFullYear()}-${month}-${day}`;
+    }
+});
+
+BigBrother.registerPartyMember('select-component',  {
+    text: ['Zero', 'One', 'Two'],
+    updateText(event) {
+        this.text[0] = event.target.value;
+        this.text[2] = this.parent.message;
+
+        const example = this.children.example;
+        const date = new Date(`${example.date}T00:00`);
+
+        date.setDate(date.getDate() + 1);
+        example.fromDateObject(date);
+    }
+});
+
+window.onload = () => {
+    BigBrother.beginWatching()
+        .then(() => console.log('Content loaded'));
+}
